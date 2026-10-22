@@ -1,0 +1,584 @@
+{
+  "appVersion": "0.13.0-beta.1",
+  "engine": "chromium",
+  "nativeDeviceTested": false,
+  "checks": [
+    {
+      "name": "wide: image alone is hidden by existing surfaces",
+      "passed": true,
+      "details": {
+        "changedFraction": 0,
+        "meanRgbDelta": 0
+      }
+    },
+    {
+      "name": "wide: background is visible through adapted surfaces",
+      "passed": true,
+      "details": {
+        "changedFraction": 0.8292820512820512,
+        "meanRgbDelta": 56.073941880341884
+      }
+    },
+    {
+      "name": "wide: sidebar also shows the background",
+      "passed": true,
+      "details": {
+        "changedFraction": 1,
+        "meanRgbDelta": 67.66666666666667
+      }
+    },
+    {
+      "name": "wide: opaque surfaces hide the wallpaper",
+      "passed": true,
+      "details": {
+        "changedFraction": 0,
+        "meanRgbDelta": 0
+      }
+    },
+    {
+      "name": "wide: zero image opacity hides image changes",
+      "passed": true,
+      "details": {
+        "changedFraction": 0,
+        "meanRgbDelta": 0
+      }
+    },
+    {
+      "name": "wide: text color and ancestor opacity are preserved",
+      "passed": true,
+      "details": {
+        "beforeText": {
+          "color": "rgb(250, 250, 250)",
+          "opacities": [
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1"
+          ]
+        },
+        "afterText": {
+          "color": "rgb(250, 250, 250)",
+          "opacities": [
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "wide: background does not intercept input",
+      "passed": true,
+      "details": {
+        "pointerEvents": "none",
+        "elementAtCenterIsImage": false
+      }
+    },
+    {
+      "name": "wide: background survives route navigation",
+      "passed": true
+    },
+    {
+      "name": "wide: cleanup removes background",
+      "passed": true
+    },
+    {
+      "name": "wide: cleanup restores original background pixels",
+      "passed": true,
+      "details": {
+        "changedFraction": 0,
+        "meanRgbDelta": 0
+      }
+    },
+    {
+      "name": "wide: no application exceptions",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "compact-web: image alone is hidden by existing surfaces",
+      "passed": true,
+      "details": {
+        "changedFraction": 0,
+        "meanRgbDelta": 0
+      }
+    },
+    {
+      "name": "compact-web: background is visible through adapted surfaces",
+      "passed": true,
+      "details": {
+        "changedFraction": 1,
+        "meanRgbDelta": 67.66666666666667
+      }
+    },
+    {
+      "name": "compact-web: opaque surfaces hide the wallpaper",
+      "passed": true,
+      "details": {
+        "changedFraction": 0,
+        "meanRgbDelta": 0
+      }
+    },
+    {
+      "name": "compact-web: zero image opacity hides image changes",
+      "passed": true,
+      "details": {
+        "changedFraction": 0,
+        "meanRgbDelta": 0
+      }
+    },
+    {
+      "name": "compact-web: text color and ancestor opacity are preserved",
+      "passed": true,
+      "details": {
+        "beforeText": {
+          "color": "rgb(250, 250, 250)",
+          "opacities": [
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1"
+          ]
+        },
+        "afterText": {
+          "color": "rgb(250, 250, 250)",
+          "opacities": [
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "compact-web: background does not intercept input",
+      "passed": true,
+      "details": {
+        "pointerEvents": "none",
+        "elementAtCenterIsImage": false
+      }
+    },
+    {
+      "name": "compact-web: cleanup removes background",
+      "passed": true
+    },
+    {
+      "name": "compact-web: cleanup restores original background pixels",
+      "passed": true,
+      "details": {
+        "changedFraction": 0,
+        "meanRgbDelta": 0
+      }
+    },
+    {
+      "name": "compact-web: no application exceptions",
+      "passed": true,
+      "details": []
+    }
+  ],
+  "cases": [
+    {
+      "name": "wide",
+      "viewport": {
+        "name": "wide",
+        "width": 1440,
+        "height": 960
+      },
+      "adaptedSurfaces": [
+        {
+          "testId": null,
+          "className": "css-g5y9jx unistyles_ix5n2ss1lq ",
+          "previousColor": "rgb(20, 23, 22)",
+          "opacity": 0.45,
+          "bounds": [
+            0,
+            0,
+            320,
+            960
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx unistyles_j2k2iilhfz ",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            1440,
+            960
+          ]
+        },
+        {
+          "testId": "wide-shell",
+          "className": "css-g5y9jx unistyles_j2k2iilhfz ",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            1440,
+            960
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx unistyles_j2k2iilhfz ",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            1440,
+            960
+          ]
+        },
+        {
+          "testId": "workspace-pane-main",
+          "className": "css-g5y9jx unistyles_rqbeci2t9s ",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0.45,
+          "bounds": [
+            320,
+            36,
+            1120,
+            924
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx unistyles_1tlp9f67pkl ",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            320,
+            0,
+            1120,
+            960
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx unistyles_ltgqfgbhj0 ",
+          "previousColor": "rgb(30, 33, 32)",
+          "opacity": 0,
+          "bounds": [
+            320,
+            0,
+            1120,
+            960
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx r-13awgt0",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            320,
+            0,
+            1120,
+            960
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx r-13awgt0 r-1p0dtai r-1d2f490 r-u8s1d r-zchlnj r-ipm5af",
+          "previousColor": "rgb(242, 242, 242)",
+          "opacity": 0,
+          "bounds": [
+            320,
+            0,
+            1120,
+            960
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx r-13awgt0",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            320,
+            0,
+            1120,
+            960
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx r-13awgt0 r-1p0dtai r-1d2f490 r-u8s1d r-zchlnj r-ipm5af",
+          "previousColor": "rgb(242, 242, 242)",
+          "opacity": 0,
+          "bounds": [
+            320,
+            0,
+            1120,
+            960
+          ]
+        }
+      ]
+    },
+    {
+      "name": "compact-web",
+      "viewport": {
+        "name": "compact-web",
+        "width": 390,
+        "height": 844
+      },
+      "adaptedSurfaces": [
+        {
+          "testId": null,
+          "className": "css-g5y9jx unistyles_1tlp9f67pkl ",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0.45,
+          "bounds": [
+            0,
+            64,
+            390,
+            780
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx unistyles_ltgqfgbhj0 ",
+          "previousColor": "rgb(30, 33, 32)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            390,
+            844
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx r-13awgt0",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            390,
+            844
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx r-13awgt0 r-1p0dtai r-1d2f490 r-u8s1d r-zchlnj r-ipm5af",
+          "previousColor": "rgb(242, 242, 242)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            390,
+            844
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx r-13awgt0",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            390,
+            844
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx r-13awgt0 r-1p0dtai r-1d2f490 r-u8s1d r-zchlnj r-ipm5af",
+          "previousColor": "rgb(242, 242, 242)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            390,
+            844
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx unistyles_j2k2iilhfz ",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            390,
+            844
+          ]
+        },
+        {
+          "testId": "compact-shell",
+          "className": "css-g5y9jx unistyles_j2k2iilhfz ",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            390,
+            844
+          ]
+        },
+        {
+          "testId": null,
+          "className": "css-g5y9jx unistyles_j2k2iilhfz ",
+          "previousColor": "rgb(24, 27, 26)",
+          "opacity": 0,
+          "bounds": [
+            0,
+            0,
+            390,
+            844
+          ]
+        }
+      ]
+    }
+  ],
+  "workspaceRoute": "/h/srv_v4gLjGkl8Psv/workspace/wks_86266fb0b4b19034"
+}

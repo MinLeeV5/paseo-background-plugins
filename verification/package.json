@@ -1,0 +1,11 @@
+{
+  "name": "paseo-background-feasibility",
+  "private": true,
+  "scripts": {
+    "verify": "node run.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2",
+    "pngjs": "7.0.0"
+  }
+}

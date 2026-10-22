@@ -1,0 +1,9 @@
+verification/node_modules/
+verification/.state/
+node_modules/
+.DS_Store
+.local/
+test-results/
+playwright-report/
+*.tgz
+dist/
