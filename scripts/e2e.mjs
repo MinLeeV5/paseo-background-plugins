@@ -12,6 +12,7 @@ import { assertWorkspaceBackground, assertNestedChatBackground, assertWorkspaceF
 const exec = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dist = process.env.PASEO_APP_DIST ?? "/Applications/Paseo.app/Contents/Resources/app-dist";
+const paseoVersion = process.env.PASEO_VERIFICATION_VERSION ?? "0.13.0-beta.1";
 await fs.access(path.join(dist, "index.html"));
 await fs.mkdir(path.join(root, ".local"), { recursive: true });
 const home = await fs.mkdtemp(path.join(root, ".local", "e2e-"));
@@ -267,7 +268,7 @@ try {
   check("Disabling removes every injected surface; enabling and plugin reload restore exactly one layer");
   assert.deepEqual(errors, []);
   check("No uncaught page errors during the complete workflow");
-  await fs.writeFile(path.join(out, "web-results.json"), JSON.stringify({ date: new Date().toISOString(), paseo: "0.13.0-beta.1", client: "Official desktop app-dist in Chromium", checks, errors }, null, 2));
+  await fs.writeFile(path.join(out, "web-results.json"), JSON.stringify({ date: new Date().toISOString(), paseo: paseoVersion, client: "Official desktop app-dist in Chromium", checks, errors }, null, 2));
 } catch (error) {
   if (browser) for (const c of browser.contexts()) for (const page of c.pages()) await page.screenshot({ path: path.join(root, ".local", "e2e-failure.png") }).catch(() => {});
   throw error;

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { Icon, SettingsCard, SettingsSection, SettingsSelect, SettingsSwitch, TextInput } from "@getpaseo/plugin/client/ui";
+import { SettingsCard, SettingsSection, SettingsSelect, SettingsSwitch } from "@getpaseo/plugin/client/ui";
+// Paseo 0.12 exposes these here; newer hosts retain this entry point as an alias.
+import { Icon, TextInput } from "@getpaseo/plugin/client/react-native";
 import type { PluginSurfaceProps } from "@getpaseo/plugin/client";
 import type { BackgroundController } from "./controller";
 import { defaults, sourceUri, withOpacity, type BackgroundSettings } from "../shared/settings";

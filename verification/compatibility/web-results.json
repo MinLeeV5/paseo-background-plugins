@@ -1,0 +1,164 @@
+{
+  "date": "2026-10-23T03:27:39.684Z",
+  "paseo": "0.12.0",
+  "client": "Official desktop app-dist in Chromium",
+  "checks": [
+    {
+      "name": "Installed plugin opens through the real Paseo sidebar; defaults are off"
+    },
+    {
+      "name": "Preset and all four sliders preview and save through settings RPC"
+    },
+    {
+      "name": "Two real workspaces preserve the background through five visits and four rapid cached switches"
+    },
+    {
+      "name": "Workspace switches keep the background adapted on every sampled rendering frame",
+      "frames": 38,
+      "errors": []
+    },
+    {
+      "name": "Left sidebar, explorer Files and Changes panels, and short headers share the theme tint"
+    },
+    {
+      "name": "Unlabelled sidebar plugin scroll viewports share the background while cards remain opaque",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.35
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.35
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.35
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.35
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.35
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.35
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.35
+        },
+        {
+          "testID": "changes-repository-header",
+          "opacity": 0.35
+        },
+        {
+          "testID": "changes-header",
+          "opacity": 0.35
+        },
+        {
+          "testID": "explorer-scroll-viewport",
+          "opacity": 0.35
+        }
+      ],
+      "maxCompositeOpacity": 0.35
+    },
+    {
+      "name": "Nested conversation backgrounds compose to the configured opacity; controls remain opaque",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.35
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.35
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.35
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.35
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.35
+        },
+        {
+          "testID": "workspace-pane-background-fixture",
+          "opacity": 0.35
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.35
+        },
+        {
+          "testID": "message-input-root",
+          "opacity": 0.35
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.35
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.35
+        },
+        {
+          "testID": "changes-repository-header",
+          "opacity": 0.35
+        },
+        {
+          "testID": "changes-header",
+          "opacity": 0.35
+        },
+        {
+          "testID": "changes-file-tree",
+          "opacity": 0.35
+        }
+      ],
+      "maxCompositeOpacity": 0.35
+    },
+    {
+      "name": "Real screenshot pixels change in both workspace and sidebar; text and pointer events are preserved",
+      "sidebarDifference": 0.9411626621804684,
+      "workspaceDifference": 0.8923858044548
+    },
+    {
+      "name": "Saved background restores after browser reload without opening settings"
+    },
+    {
+      "name": "Surface blending follows light and dark theme changes without replacing the image"
+    },
+    {
+      "name": "Leaving settings discards unsaved preview and restores the saved background"
+    },
+    {
+      "name": "Invalid URLs are rejected and failed image loads keep the last rendered background"
+    },
+    {
+      "name": "A custom HTTPS image can be decoded, applied, and saved"
+    },
+    {
+      "name": "Two clients synchronize host settings; stale saves are rejected and recover after reload"
+    },
+    {
+      "name": "Zero image opacity restores original surfaces and discard restores saved values"
+    },
+    {
+      "name": "Fit and position controls apply; settings remain usable in a 900px web window"
+    },
+    {
+      "name": "Disabling removes every injected surface; enabling and plugin reload restore exactly one layer"
+    },
+    {
+      "name": "No uncaught page errors during the complete workflow"
+    }
+  ],
+  "errors": []
+}

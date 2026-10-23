@@ -10,6 +10,7 @@ import { assertWorkspaceBackground, assertNestedChatBackground, assertWorkspaceF
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const executable = process.env.PASEO_DESKTOP_EXECUTABLE ?? "/Applications/Paseo.app/Contents/MacOS/Paseo";
+const paseoVersion = process.env.PASEO_VERIFICATION_VERSION ?? "0.13.0-beta.1";
 await fs.access(executable);
 await fs.mkdir(path.join(root, ".local"), { recursive: true });
 const home = await fs.mkdtemp(path.join(root, ".local", "desktop-e2e-"));
@@ -155,7 +156,7 @@ try {
   check("Desktop plugin disable fully cleans up and enable restores one layer");
   assert.deepEqual(errors, []);
   check("No uncaught page errors in the packaged desktop workflow");
-  await fs.writeFile(path.join(out, "desktop-results.json"), JSON.stringify({ date: new Date().toISOString(), paseo: "0.13.0-beta.1", client: "Unmodified official packaged macOS desktop application", runtime: { browser: runtime.Browser, userAgent: runtime["User-Agent"] }, checks, errors }, null, 2));
+  await fs.writeFile(path.join(out, "desktop-results.json"), JSON.stringify({ date: new Date().toISOString(), paseo: paseoVersion, client: "Unmodified official packaged macOS desktop application", runtime: { browser: runtime.Browser, userAgent: runtime["User-Agent"] }, checks, errors }, null, 2));
 } catch (error) {
   if (browser) for (const context of browser.contexts()) for (const page of context.pages()) await page.screenshot({ path: path.join(root, ".local", "desktop-failure.png") }).catch(() => {});
   throw error;
