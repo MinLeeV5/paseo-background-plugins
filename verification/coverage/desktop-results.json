@@ -1,0 +1,141 @@
+{
+  "date": "2026-10-23T02:03:55.289Z",
+  "paseo": "0.13.0-beta.1",
+  "client": "Unmodified official packaged macOS desktop application",
+  "runtime": {
+    "browser": "Chrome/152.0.7977.76",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) PaseoBackgroundVerification/0.13.0-beta.1 Chrome/152.0.7977.76 Electron/44.2.0 Safari/537.36"
+  },
+  "checks": [
+    {
+      "name": "Official packaged Paseo desktop loads the installed plugin using its real preload and main process"
+    },
+    {
+      "name": "Desktop preset, opacity, blur, brightness, fit and position preview, save and survive navigation"
+    },
+    {
+      "name": "Desktop cached workspaces keep one loaded image and transparent surfaces through repeated and rapid switching"
+    },
+    {
+      "name": "Desktop workspace switches keep surfaces adapted on every sampled rendering frame",
+      "frames": 27,
+      "errors": []
+    },
+    {
+      "name": "Desktop left sidebar, explorer Files and Changes, and short headers share the theme tint"
+    },
+    {
+      "name": "Desktop sidebar plugin scroll viewports share the background while cards remain opaque",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "changes-repository-header",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "changes-header",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": null,
+          "opacity": 0.44999999999999996
+        }
+      ],
+      "maxCompositeOpacity": 0.44999999999999996
+    },
+    {
+      "name": "Desktop nested conversation backgrounds match the opacity slider; controls remain opaque",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "workspace-pane-background-fixture",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "message-input-root",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "changes-repository-header",
+          "opacity": 0.44999999999999996
+        },
+        {
+          "testID": "changes-header",
+          "opacity": 0.44999999999999996
+        }
+      ],
+      "maxCompositeOpacity": 0.44999999999999996
+    },
+    {
+      "name": "Desktop reload restores background without opening settings"
+    },
+    {
+      "name": "Desktop off switch removes the background and the saved off state survives reload"
+    },
+    {
+      "name": "Desktop plugin disable fully cleans up and enable restores one layer"
+    },
+    {
+      "name": "No uncaught page errors in the packaged desktop workflow"
+    }
+  ],
+  "errors": []
+}

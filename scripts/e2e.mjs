@@ -7,7 +7,7 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { PNG } from "pngjs";
-import { assertWorkspaceBackground, assertNestedChatBackground } from "./workspace-checks.mjs";
+import { assertWorkspaceBackground, assertNestedChatBackground, assertWorkspaceFrames, assertPluginViewport } from "./workspace-checks.mjs";
 
 const exec = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -123,6 +123,21 @@ try {
   await savedImage.dispose();
   await page.screenshot({ path: path.join(out, "web-workspace-switch.png") });
   check("Two real workspaces preserve the background through five visits and four rapid cached switches");
+  check("Workspace switches keep the background adapted on every sampled rendering frame",
+    await assertWorkspaceFrames(page, ["Second workspace verification", "Background verification", "Second workspace verification", "Background verification", "Second workspace verification", "Background verification"], 0.35));
+  await page.locator('[data-testid="workspace-explorer-toggle"]:visible').first().click();
+  const explorer = page.locator('[data-testid="workspace-explorer-sidebar"]:visible');
+  await explorer.waitFor();
+  await explorer.getByTestId("workspace-tab-files").click();
+  await page.locator('[data-testid="file-explorer-tree-scroll"]:visible,[data-testid="files-empty-area"]:visible').first().waitFor();
+  await assertWorkspaceBackground(page, 0.35);
+  await page.screenshot({ path: path.join(out, "web-sidebar-files.png") });
+  await explorer.getByTestId("workspace-tab-changes_tree").click();
+  await page.locator('[data-testid="changes-header"]:visible').waitFor();
+  await assertWorkspaceBackground(page, 0.35);
+  check("Left sidebar, explorer Files and Changes panels, and short headers share the theme tint");
+  check("Unlabelled sidebar plugin scroll viewports share the background while cards remain opaque",
+    await assertPluginViewport(page, 0.35));
   check("Nested conversation backgrounds compose to the configured opacity; controls remain opaque",
     await assertNestedChatBackground(page, 0.35, path.join(out, "web-chat-opacity.png")));
   await workspace(page);
@@ -152,13 +167,13 @@ try {
   await page.reload();
   await expect(async () => await imageSource(page).catch(() => "") === night, "Saved background was not restored after reload", 30000);
   check("Saved background restores after browser reload without opening settings");
-  const dark = await page.locator("#paseo-background-style").textContent();
+  const dark = await page.locator("#paseo-background-tint").evaluate((node) => getComputedStyle(node).backgroundColor);
   await page.emulateMedia({ colorScheme: "light" });
-  await expect(async () => await page.locator("#paseo-background-style").textContent() !== dark, "Surface colors did not follow the light theme");
+  await expect(async () => await page.locator("#paseo-background-tint").evaluate((node) => getComputedStyle(node).backgroundColor) !== dark, "Surface colors did not follow the light theme");
   assert.equal(await imageSource(page), night);
   await page.screenshot({ path: path.join(out, "web-light.png") });
   await page.emulateMedia({ colorScheme: "dark" });
-  await expect(async () => await page.locator("#paseo-background-style").textContent() === dark, "Surface colors did not restore the dark theme");
+  await expect(async () => await page.locator("#paseo-background-tint").evaluate((node) => getComputedStyle(node).backgroundColor) === dark, "Surface colors did not restore the dark theme");
   check("Surface blending follows light and dark theme changes without replacing the image");
   await settings(page);
   await page.getByTestId("background-preset-plum").click();

@@ -6,7 +6,7 @@ import { spawn, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
-import { assertWorkspaceBackground, assertNestedChatBackground } from "./workspace-checks.mjs";
+import { assertWorkspaceBackground, assertNestedChatBackground, assertWorkspaceFrames, assertPluginViewport } from "./workspace-checks.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const executable = process.env.PASEO_DESKTOP_EXECUTABLE ?? "/Applications/Paseo.app/Contents/MacOS/Paseo";
@@ -31,7 +31,7 @@ await fs.writeFile(path.join(profile, "desktop-settings.json"), JSON.stringify({
 const log = await fs.open(path.join(home, "desktop.log"), "w");
 let child, browser, started = false;
 const checks = [], errors = [];
-const check = (name) => { checks.push({ name }); console.log(`✓ ${name}`); };
+const check = (name, detail = {}) => { checks.push({ name, ...detail }); console.log(`✓ ${name}`); };
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 async function expect(fn, message, ms = 15000) {
   const end = Date.now() + ms;
@@ -117,6 +117,21 @@ try {
   await savedImage.dispose();
   await page.screenshot({ path: path.join(out, "desktop-workspace-switch.png") });
   check("Desktop cached workspaces keep one loaded image and transparent surfaces through repeated and rapid switching");
+  check("Desktop workspace switches keep surfaces adapted on every sampled rendering frame",
+    await assertWorkspaceFrames(page, ["Second workspace verification", "Background verification", "Second workspace verification", "Background verification", "Second workspace verification", "Background verification"], 0.45));
+  await page.locator('[data-testid="workspace-explorer-toggle"]:visible').first().click();
+  const explorer = page.locator('[data-testid="workspace-explorer-sidebar"]:visible');
+  await explorer.waitFor();
+  await explorer.getByTestId("workspace-tab-files").click();
+  await page.locator('[data-testid="file-explorer-tree-scroll"]:visible,[data-testid="files-empty-area"]:visible').first().waitFor();
+  await assertWorkspaceBackground(page, 0.45);
+  await page.screenshot({ path: path.join(out, "desktop-sidebar-files.png") });
+  await explorer.getByTestId("workspace-tab-changes_tree").click();
+  await page.locator('[data-testid="changes-header"]:visible').waitFor();
+  await assertWorkspaceBackground(page, 0.45);
+  check("Desktop left sidebar, explorer Files and Changes, and short headers share the theme tint");
+  check("Desktop sidebar plugin scroll viewports share the background while cards remain opaque",
+    await assertPluginViewport(page, 0.45));
   check("Desktop nested conversation backgrounds match the opacity slider; controls remain opaque",
     await assertNestedChatBackground(page, 0.45, path.join(out, "desktop-chat-opacity.png")));
   await page.reload();

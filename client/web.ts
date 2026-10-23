@@ -65,7 +65,8 @@ declare const window: {
   addEventListener(name: string, callback: () => void): void;
   removeEventListener(name: string, callback: () => void): void;
 };
-declare const getComputedStyle: (element: Element) => { backgroundColor: string };
+declare const getComputedStyle: (element: Element) => { backgroundColor: string; overflowY: string };
+declare const queueMicrotask: (callback: () => void) => void;
 declare const MutationObserver: new (callback: (records: RecordChange[]) => void) => {
   observe(node: Element, options: object): void;
   disconnect(): void;
@@ -83,25 +84,43 @@ const ROOT_MARK = "data-paseo-background-root";
 const STORAGE = "paseo-background:selected-profile:v1";
 const ANCHORS = [
   '[data-testid="sidebar-project-workspace-list-scroll"]',
+  '[data-testid="sidebar-footer"]',
+  '[data-testid="workspace-explorer-sidebar"]',
+  '[data-testid="workspace-tabs-row"]',
+  '[data-testid="files-pane-header"]',
+  '[data-testid="file-explorer-tree-scroll"]',
+  '[data-testid="files-empty-area"]',
+  '[data-testid="changes-tree-panel"]',
+  '[data-testid="changes-repository-header"]',
+  '[data-testid="changes-header"]',
   '[data-testid^="workspace-pane-"]',
   '[data-testid="workspace-header-title"]',
   '[data-testid="composer-dock-header"]',
   '[data-testid="paseo-background-settings"]',
   '[data-testid="agent-chat-scroll"]',
+  '[data-testid="message-input-root"]',
+  '[data-testid="agent-loading"]',
+  '[data-testid="agent-load-error"]',
+  '[data-testid="agent-not-found"]',
 ].join(",");
+const EXPLORER = '[data-testid="workspace-explorer-sidebar"]';
+const CONTENT_SURFACES = '.monaco-editor,.cm-editor,.xterm,iframe,canvas,pre,[role="textbox"],[contenteditable="true"]';
 
 class BackgroundManager {
   private owners = new Map<symbol, Owner>();
   private patched = new Map<Element, string | null>();
   private layoutNodes = new Set<Element>();
+  private scrollRoots = new Set<Element>();
   private root: Element | null = null;
   private style: Element | null = null;
   private layer: Element | null = null;
   private image: Element | null = null;
+  private tint: Element | null = null;
   private uri = "";
   private loadingUri = "";
   private generation = 0;
-  private timer: number | null = null;
+  private refreshQueued = false;
+  private refreshEpoch = 0;
   private loadTimer: number | null = null;
   private observer: InstanceType<typeof MutationObserver> | null = null;
   private active: symbol | null = null;
@@ -207,7 +226,7 @@ class BackgroundManager {
   private ensureLayer() {
     const root = document.getElementById("root");
     if (!root) return;
-    if (this.root === root && this.layer?.isConnected) return;
+    if (this.root === root && this.layer?.isConnected && this.style?.isConnected && this.tint?.isConnected) return;
     this.detach();
     this.root = root;
     root.setAttribute(ROOT_MARK, "true");
@@ -217,6 +236,11 @@ class BackgroundManager {
     this.layer.setAttribute("aria-hidden", "true");
     root.prepend(this.layer);
     if (this.image) this.layer.appendChild(this.image);
+    this.tint = document.createElement("div");
+    this.tint.id = "paseo-background-tint";
+    this.tint.setAttribute(OWNED, "tint");
+    this.tint.setAttribute("aria-hidden", "true");
+    this.layer.appendChild(this.tint);
     this.style = document.createElement("style");
     this.style.id = "paseo-background-style";
     this.style.setAttribute(OWNED, "style");
@@ -227,6 +251,10 @@ class BackgroundManager {
         // Retained workspaces change visibility on transparent wrappers. Those
         // nodes need observation even though their backgrounds are not patched.
         if (record.type === "attributes") return this.layoutNodes.has(record.target) || record.target.matches(ANCHORS);
+        // A plugin panel can mount an unlabelled scroll viewport. Only inspect
+        // mounts outside known viewports; rows inside them do not need rescans.
+        if (record.target.closest(EXPLORER) && ![...this.scrollRoots].some((root) => root.contains(record.target)) &&
+          [...record.addedNodes, ...record.removedNodes].some((node) => node.nodeType === 1 && !node.getAttribute(OWNED))) return true;
         return [...record.addedNodes, ...record.removedNodes].some((node) => node.nodeType === 1 &&
           !node.getAttribute(OWNED) && (node.matches(ANCHORS) || Boolean(node.querySelector(ANCHORS))));
       });
@@ -244,75 +272,113 @@ class BackgroundManager {
       position: "absolute", inset: `${-pad}px`, width: `calc(100% + ${pad * 2}px)`, height: `calc(100% + ${pad * 2}px)`,
       "object-fit": values.fit, "object-position": values.position,
       opacity: String(values.imageOpacity), filter: `blur(${values.blurRadius}px) brightness(${values.brightness})`,
-      "pointer-events": "none", "user-select": "none",
+      "pointer-events": "none", "user-select": "none", "z-index": "0",
     };
     for (const [key, value] of Object.entries(rules)) this.image.style.setProperty(key, value);
   }
 
   private schedule = () => {
-    if (this.timer !== null) return;
-    this.timer = window.setTimeout(() => { this.timer = null; this.refresh(); }, 100);
+    if (this.refreshQueued) return;
+    this.refreshQueued = true;
+    const epoch = this.refreshEpoch;
+    // MutationObserver already batches a React commit. Finish adaptation in
+    // its microtask checkpoint, before the browser can paint native surfaces.
+    queueMicrotask(() => {
+      if (epoch !== this.refreshEpoch) return;
+      this.refreshQueued = false;
+      this.refresh();
+    });
   };
+
+  private anchors() {
+    const anchors = new Set(document.querySelectorAll(ANCHORS));
+    for (const root of this.scrollRoots) {
+      if (!root.isConnected || !root.closest(EXPLORER) || root.closest(CONTENT_SURFACES)) this.scrollRoots.delete(root);
+      else anchors.add(root);
+    }
+    const visit = (node: Element, depth: number) => {
+      if (depth > 8 || node.matches(CONTENT_SURFACES)) return;
+      const box = node.getBoundingClientRect();
+      if (box.width < 140 || box.height < 140) return;
+      if (["auto", "scroll"].includes(getComputedStyle(node).overflowY)) {
+        this.scrollRoots.add(node);
+        anchors.add(node);
+        return;
+      }
+      for (const child of node.children) visit(child, depth + 1);
+    };
+    for (const dock of document.querySelectorAll(EXPLORER)) visit(dock, 0);
+    return anchors;
+  }
 
   private refresh() {
     if (!this.active || !this.image) return;
     this.ensureLayer();
-    if (!this.root?.isConnected || !this.style) {
+    if (!this.root?.isConnected || !this.style || !this.tint) {
       this.report({ status: "partial", surfaces: 0, error: "Paseo's app root was not found." });
       return;
     }
     const owner = this.owners.get(this.active);
     if (!owner) return;
-    for (const [node, previous] of this.patched) {
-      if (previous === null) node.removeAttribute(MARK);
-      else node.setAttribute(MARK, previous);
-    }
-    this.patched.clear();
     this.layoutNodes.clear();
     this.layoutNodes.add(this.root);
-    const surfaces = new Map<Element, { color: string; tint: boolean }>();
-    for (const anchor of document.querySelectorAll(ANCHORS)) {
-      if (anchor.closest(`[${OWNED}]`)) continue;
-      const box = anchor.getBoundingClientRect();
-      const visible = box.width > 0 && box.height > 0;
-      let first = true;
-      for (let node: Element | null = anchor; node && node !== this.root; node = node.parentElement) {
-        // Include hidden and zero-size paths so showing a cached workspace
-        // schedules a refresh without requiring a remount or window focus.
-        this.layoutNodes.add(node);
-        if (!visible) continue;
-        const bounds = node.getBoundingClientRect();
-        if (bounds.width < 140 || bounds.height < 140) continue;
-        const color = getComputedStyle(node).backgroundColor;
-        if (!withOpacity(color, 1)) continue;
-        const existing = surfaces.get(node);
-        if (!existing) surfaces.set(node, { color, tint: first });
-        // An earlier anchor (header or pane) may have tinted this ancestor.
-        // A deeper region must clear it so nested 72% tints do not become 98%.
-        else if (!first) existing.tint = false;
-        first = false;
+    const surfaces = new Set<Element>();
+    let themeColor: string | null = null;
+    let fallbackColor: string | null = null;
+    // Read the host's current colors without removing stable surface marks or
+    // disturbing layout. Measurement and restoration complete in one task.
+    this.root.setAttribute(ROOT_MARK, "measure");
+    try {
+      const shell = this.root.querySelector('[data-testid="wide-shell"]') ?? this.root;
+      const shellColor = getComputedStyle(shell).backgroundColor;
+      if (withOpacity(shellColor, 1)) themeColor = shellColor;
+      for (const anchor of this.anchors()) {
+        if (!this.root.contains(anchor) || anchor.closest(`[${OWNED}]`)) continue;
+        const box = anchor.getBoundingClientRect();
+        const visible = box.width > 0 && box.height > 0;
+        for (let node: Element | null = anchor; node && node !== this.root; node = node.parentElement) {
+          this.layoutNodes.add(node);
+          const bounds = node.getBoundingClientRect();
+          // Trusted layout paths include 36px bars. Keep cached surfaces ready
+          // while hidden, but leave borders and interactive controls alone.
+          if (visible ? bounds.width < 140 || bounds.height <= 1 : !this.patched.has(node)) continue;
+          if (["BUTTON", "INPUT", "TEXTAREA", "SELECT"].includes(node.tagName) || node.getAttribute("role") === "button") continue;
+          const color = getComputedStyle(node).backgroundColor;
+          if (!withOpacity(color, 1)) continue;
+          surfaces.add(node);
+          if (visible) fallbackColor = color;
+        }
       }
+      for (const [node, previous] of this.patched) {
+        if (surfaces.has(node)) continue;
+        if (previous === null) node.removeAttribute(MARK);
+        else node.setAttribute(MARK, previous);
+        this.patched.delete(node);
+      }
+      for (const node of surfaces) {
+        if (!this.patched.has(node)) this.patched.set(node, node.getAttribute(MARK));
+        if (node.getAttribute(MARK) !== "true") node.setAttribute(MARK, "true");
+      }
+      this.tint.style.setProperty("background-color", withOpacity(themeColor ?? fallbackColor ?? "rgb(0, 0, 0)", owner.values.surfaceOpacity)!);
+    } finally {
+      this.root.setAttribute(ROOT_MARK, "true");
     }
     const css = [
-      `[${ROOT_MARK}="true"]{position:relative!important;isolation:isolate!important}`,
-      `[${ROOT_MARK}="true"]> :not([${OWNED}]){position:relative;z-index:1}`,
+      `[${ROOT_MARK}]{position:relative!important;isolation:isolate!important}`,
+      `[${ROOT_MARK}]> :not([${OWNED}]){position:relative;z-index:1}`,
       `#paseo-background-layer{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;contain:strict}`,
+      `#paseo-background-tint{position:absolute;inset:0;pointer-events:none;z-index:1}`,
+      `[${ROOT_MARK}="true"] [${MARK}]{background-color:transparent!important}`,
     ];
-    let index = 0;
-    for (const [node, surface] of surfaces) {
-      const id = String(index++);
-      this.patched.set(node, node.getAttribute(MARK));
-      node.setAttribute(MARK, id);
-      css.push(`[${MARK}="${id}"]{background-color:${surface.tint ? withOpacity(surface.color, owner.values.surfaceOpacity) : "transparent"}!important}`);
-    }
-    this.style.textContent = css.join("\n");
+    const text = css.join("\n");
+    if (this.style.textContent !== text) this.style.textContent = text;
     this.report({ status: surfaces.size > 1 ? "active" : "partial", surfaces: surfaces.size,
       error: surfaces.size > 1 ? null : "This page has no supported background regions yet." });
   }
 
   private detach() {
-    if (this.timer !== null) window.clearTimeout(this.timer);
-    this.timer = null;
+    ++this.refreshEpoch;
+    this.refreshQueued = false;
     this.observer?.disconnect();
     this.observer = null;
     window.removeEventListener("resize", this.schedule);
@@ -323,10 +389,12 @@ class BackgroundManager {
     }
     this.patched.clear();
     this.layoutNodes.clear();
+    this.scrollRoots.clear();
     this.root?.removeAttribute(ROOT_MARK);
     this.layer?.remove();
     this.style?.remove();
     this.layer = null;
+    this.tint = null;
     this.style = null;
     this.root = null;
   }

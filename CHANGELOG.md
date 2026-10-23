@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3 — 2026-10-23
+
+- Adapt layout changes in a microtask before paint instead of waiting 100ms; retain cached surface marks and the loaded image across workspace switches.
+- Use one theme tint behind the interface, keeping background opacity continuous between chat, composer surroundings, headers and sidebars.
+- Cover short layout bars and the right explorer's Files, Changes and plugin scroll viewports; preserve cards, buttons, editors, terminals and embedded content.
+- Add first-frame and coverage regressions, per-frame Web / desktop switch checks, and native explorer and plugin viewport checks.
+
 ## 0.1.2 — 2026-10-23
 
 - Fix nested header, workspace and chat backgrounds multiplying surface opacity: three 72% tints previously composed to 97.8%, making a saved background appear absent.

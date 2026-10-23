@@ -7,7 +7,7 @@ Open **Backgrounds** in the sidebar or host plugin settings. The Command Center 
 Tested with the unmodified Paseo **0.13.0-beta.1** macOS desktop application and its corresponding Web client. The public `app.paseo.sh` client was still v0.12.0 during verification and needs a client update before it can use the v0.13 plugin API. Native mobile is outside this plugin's scope. Windows and Linux use the same renderer implementation but have not been tested in this release.
 
 ```sh
-paseo plugin add git:MinLeeV5/paseo-background-plugins --ref v0.1.2
+paseo plugin add git:MinLeeV5/paseo-background-plugins --ref v0.1.3
 ```
 
 Saved preferences are shared by clients connected to the same host. Unsaved previews affect only the current window. HTTPS images are loaded by each client; local file upload is not included.

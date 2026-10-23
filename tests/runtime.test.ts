@@ -19,12 +19,13 @@ test("adapts only layout surfaces, preserves opaque controls, and restores React
   assert.ok(dom.document.querySelector("#paseo-background-layer img"));
   const surface = dom.document.querySelector("section")!;
   assert.ok(surface.hasAttribute("data-paseo-background-surface"));
-  assert.ok(dom.document.getElementById("paseo-background-style")!.textContent!.includes("background-color:rgba(25, 28, 33, 0.4)!important"));
+  assert.equal(dom.window.getComputedStyle(dom.document.getElementById("paseo-background-tint")!).backgroundColor, "rgba(20, 24, 30, 0.4)");
   assert.equal(dom.window.getComputedStyle(dom.document.querySelector("button")!).backgroundColor, "rgb(90, 100, 110)");
   assert.ok(states.includes("active"));
   surface.style.backgroundColor = "rgb(180, 190, 200)";
+  dom.document.querySelector("main")!.style.backgroundColor = "rgb(180, 190, 200)";
   await settle();
-  assert.ok(dom.document.getElementById("paseo-background-style")!.textContent!.includes("background-color:rgba(180, 190, 200, 0.4)!important"));
+  assert.equal(dom.window.getComputedStyle(dom.document.getElementById("paseo-background-tint")!).backgroundColor, "rgba(180, 190, 200, 0.4)");
   h.dispose();
   assert.equal(dom.window.getComputedStyle(surface).backgroundColor, "rgb(180, 190, 200)");
   assert.equal(dom.document.querySelector("[data-paseo-background-surface],#paseo-background-layer,#paseo-background-style,[data-paseo-background-root]"), null);
@@ -74,6 +75,47 @@ test("adapts cached workspaces when their transparent retained wrappers change v
   }
 });
 
+test("adapts a newly visible cached workspace before the next paint task", async () => {
+  const cached = dom.document.createElement("div");
+  cached.style.display = "none";
+  cached.innerHTML = '<section data-testid="workspace-pane-next" style="background-color:rgb(45,50,60)"></section>';
+  dom.document.querySelector("main")!.appendChild(cached);
+  runtime().update(enabled());
+  await settle();
+  cached.style.display = "flex";
+  await settle(0);
+  assert.ok(cached.querySelector("section")!.hasAttribute("data-paseo-background-surface"), "No timer delay may expose the native workspace background");
+});
+
+test("covers short layout bars, the explorer and composer surroundings while preserving controls", async () => {
+  const main = dom.document.querySelector("main")!;
+  main.insertAdjacentHTML("beforeend", '<header data-testid="composer-dock-header" style="background-color:rgb(25,28,33)"></header><aside data-testid="workspace-explorer-sidebar" style="background-color:rgb(30,35,42)"><nav data-testid="workspace-tabs-row" style="background-color:rgb(30,35,42)"></nav><div style="background-color:rgb(30,35,42)"><div data-testid="file-explorer-tree-scroll"></div></div></aside><footer style="background-color:rgb(25,28,33)"><div data-testid="message-input-root"><button style="background-color:rgb(90,100,110)">Send</button></div></footer>');
+  const rect = dom.window.HTMLElement.prototype.getBoundingClientRect;
+  dom.window.HTMLElement.prototype.getBoundingClientRect = function () {
+    const box = rect.call(this);
+    return { ...box, height: ["HEADER", "NAV", "FOOTER"].includes(this.tagName) ? 36 : box.height };
+  };
+  runtime().update(enabled());
+  await settle();
+  for (const node of main.querySelectorAll("header,nav,footer,[data-testid=workspace-explorer-sidebar]"))
+    assert.ok(node.hasAttribute("data-paseo-background-surface"), `${node.tagName} layout background must be adapted`);
+  assert.ok(dom.document.getElementById("paseo-background-tint"), "All regions share one theme tint");
+  for (const button of main.querySelectorAll("button")) assert.equal(dom.window.getComputedStyle(button).backgroundColor, "rgb(90, 100, 110)");
+  const plugin = dom.document.createElement("div");
+  plugin.style.cssText = "overflow-y:auto;background-color:rgb(20,24,30)";
+  plugin.innerHTML = '<div class="plugin-card" style="background-color:rgb(60,70,80)">Keep cards distinct</div>';
+  main.querySelector('[data-testid="workspace-explorer-sidebar"]')!.appendChild(plugin);
+  await settle(0);
+  assert.ok(plugin.hasAttribute("data-paseo-background-surface"), "Unlabelled plugin scroll viewports are layout surfaces too");
+  assert.equal(plugin.firstElementChild!.hasAttribute("data-paseo-background-surface"), false, "Panel cards keep their own backgrounds");
+  const editor = dom.document.createElement("div");
+  editor.className = "monaco-editor";
+  editor.style.cssText = "overflow-y:auto;background-color:rgb(60,70,80)";
+  plugin.parentElement!.appendChild(editor);
+  await settle(0);
+  assert.equal(editor.hasAttribute("data-paseo-background-surface"), false, "Embedded editors retain their backgrounds");
+});
+
 test("nested workspace and chat regions do not multiply the configured surface opacity", async () => {
   const pane = dom.document.querySelector("section")!;
   const workspace = dom.document.createElement("div");
@@ -93,7 +135,8 @@ test("nested workspace and chat regions do not multiply the configured surface o
   h.update(values);
   await settle();
   function chatAlpha() {
-    let transmission = 1;
+    const tint = dom.window.getComputedStyle(dom.document.getElementById("paseo-background-tint")!).backgroundColor;
+    let transmission = 1 - Number(tint.slice(5, -1).split(",")[3]);
     for (let node = pane.querySelector("[data-testid=agent-chat-scroll]"); node && node.id !== "root"; node = node.parentElement) {
       const color = dom.window.getComputedStyle(node).backgroundColor;
       const alpha = color.startsWith("rgba(") ? Number(color.slice(5, -1).split(",")[3]) : color.startsWith("rgb(") ? 1 : 0;
