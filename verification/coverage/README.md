@@ -27,6 +27,10 @@
 
 结果：[Web](web-results.json)、[桌面](desktop-results.json)。公开截图来自独立测试工作区，不包含日常会话内容。
 
+在 `paseo-background-plugins` 与 `help-answer` 两个实际会话中，保留原有 HTTPS 地球背景与参数，检查两组 Files / Changes / Progress 共六种面板状态；连续切换的 **126 个渲染帧**均无原底色遮挡，图片节点未替换。另采集 **134 个画面帧**，同一聊天留白点的 RGB 恒为 `(199,199,199)`；旧版同位置在 `(199,199,199)` 与白色 `(255,255,255)` 之间跳变。该结果说明采样位置的白底闪烁已消除，不用于衡量宿主其他内容动画。
+
+刷新恢复通过，背景配置文件哈希与更新前一致，日常 daemon 未重启。去除图片地址、连接信息和会话内容的结果见 [实际工作区记录](real-workspaces.json)；原始会话截图和画面帧仅保留在本地。
+
 ![Web 左右侧栏背景](web-sidebar-files.png)
 
 ![原版桌面左右侧栏背景](desktop-sidebar-files.png)

@@ -1,0 +1,454 @@
+{
+  "date": "2026-10-23T02:21:10.365Z",
+  "workspaces": [
+    "paseo-background-plugins",
+    "help-answer"
+  ],
+  "source": "Existing custom HTTPS image, address omitted",
+  "savedImagePreserved": true,
+  "settingsUnchanged": true,
+  "reloadPassed": true,
+  "panels": [
+    {
+      "workspace": "paseo-background-plugins",
+      "panel": "Files",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.72
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "message-input-root",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "files-pane-header",
+          "opacity": 0.72
+        },
+        {
+          "testID": "file-explorer-tree-scroll",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "paseo-background-plugins",
+      "panel": "Changes",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.72
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "message-input-root",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "changes-repository-header",
+          "opacity": 0.72
+        },
+        {
+          "testID": "changes-header",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "paseo-background-plugins",
+      "panel": "Progress",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.72
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "message-input-root",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "explorer-scroll-viewport",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "help-answer",
+      "panel": "Files",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.72
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "message-input-root",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "help-answer",
+      "panel": "Changes",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.72
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "message-input-root",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "help-answer",
+      "panel": "Progress",
+      "regions": [
+        {
+          "testID": "sidebar-project-workspace-list-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "sidebar-footer",
+          "opacity": 0.72
+        },
+        {
+          "testID": "composer-dock-header",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        },
+        {
+          "testID": "message-input-root",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-explorer-sidebar",
+          "opacity": 0.72
+        },
+        {
+          "testID": "workspace-tabs-row",
+          "opacity": 0.72
+        },
+        {
+          "testID": "explorer-scroll-viewport",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    }
+  ],
+  "frameCheck": {
+    "frames": 126,
+    "errors": []
+  },
+  "beforeFrameCheck": {
+    "failed": true,
+    "errors": [
+      {
+        "frame": 1,
+        "region": "composer-dock-header",
+        "opacity": 1
+      },
+      {
+        "frame": 1,
+        "region": "workspace-tabs-row",
+        "opacity": 1
+      },
+      {
+        "frame": 1,
+        "region": "workspace-explorer-sidebar",
+        "opacity": 1
+      },
+      {
+        "frame": 1,
+        "region": "workspace-tabs-row",
+        "opacity": 1
+      },
+      {
+        "frame": 2,
+        "region": "composer-dock-header",
+        "opacity": 1
+      },
+      {
+        "frame": 2,
+        "region": "workspace-tabs-row",
+        "opacity": 1
+      },
+      {
+        "frame": 2,
+        "region": "workspace-explorer-sidebar",
+        "opacity": 1
+      },
+      {
+        "frame": 2,
+        "region": "workspace-tabs-row",
+        "opacity": 1
+      },
+      {
+        "frame": 3,
+        "region": "composer-dock-header",
+        "opacity": 1
+      },
+      {
+        "frame": 3,
+        "region": "workspace-tabs-row",
+        "opacity": 1
+      },
+      {
+        "frame": 3,
+        "region": "workspace-explorer-sidebar",
+        "opacity": 1
+      },
+      {
+        "frame": 3,
+        "region": "workspace-tabs-row",
+        "opacity": 1
+      },
+      {
+        "frame": 4,
+        "region": "composer-dock-header",
+        "opacity": 1
+      },
+      {
+        "frame": 4,
+        "region": "workspace-pane-main",
+        "opacity": 1
+      },
+      {
+        "frame": 4,
+        "region": "workspace-tabs-row",
+        "opacity": 1
+      },
+      {
+        "frame": 4,
+        "region": "agent-chat-scroll",
+        "opacity": 1
+      },
+      {
+        "frame": 4,
+        "region": "message-input-root",
+        "opacity": 1
+      },
+      {
+        "frame": 4,
+        "region": "workspace-explorer-sidebar",
+        "opacity": 1
+      },
+      {
+        "frame": 4,
+        "region": "workspace-tabs-row",
+        "opacity": 1
+      },
+      {
+        "frame": 4,
+        "region": null,
+        "opacity": 1
+      }
+    ]
+  },
+  "pixels": {
+    "point": {
+      "x": 326,
+      "y": 152
+    },
+    "before": {
+      "frames": 104,
+      "dimensions": [
+        922,
+        640
+      ],
+      "ranges": [
+        56,
+        56,
+        56
+      ],
+      "min": [
+        199,
+        199,
+        199
+      ],
+      "max": [
+        255,
+        255,
+        255
+      ]
+    },
+    "after": {
+      "frames": 134,
+      "dimensions": [
+        922,
+        640
+      ],
+      "ranges": [
+        0,
+        0,
+        0
+      ],
+      "min": [
+        199,
+        199,
+        199
+      ],
+      "max": [
+        199,
+        199,
+        199
+      ]
+    }
+  }
+}
