@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-23T01:36:49.744Z",
+  "paseo": "0.13.0-beta.1",
+  "client": "Official desktop app-dist in Chromium",
+  "checks": [
+    {
+      "name": "Installed plugin opens through the real Paseo sidebar; defaults are off"
+    },
+    {
+      "name": "Preset and all four sliders preview and save through settings RPC"
+    },
+    {
+      "name": "Two real workspaces preserve the background through five visits and four rapid cached switches"
+    },
+    {
+      "name": "Nested conversation backgrounds compose to the configured opacity; controls remain opaque",
+      "regions": [
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0
+        },
+        {
+          "testID": "workspace-pane-background-fixture",
+          "opacity": 0
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.35
+        }
+      ],
+      "maxCompositeOpacity": 0.35
+    },
+    {
+      "name": "Real screenshot pixels change in both workspace and sidebar; text and pointer events are preserved",
+      "sidebarDifference": 0.9411626621804684,
+      "workspaceDifference": 0.9767671774592189
+    },
+    {
+      "name": "Saved background restores after browser reload without opening settings"
+    },
+    {
+      "name": "Surface blending follows light and dark theme changes without replacing the image"
+    },
+    {
+      "name": "Leaving settings discards unsaved preview and restores the saved background"
+    },
+    {
+      "name": "Invalid URLs are rejected and failed image loads keep the last rendered background"
+    },
+    {
+      "name": "A custom HTTPS image can be decoded, applied, and saved"
+    },
+    {
+      "name": "Two clients synchronize host settings; stale saves are rejected and recover after reload"
+    },
+    {
+      "name": "Zero image opacity restores original surfaces and discard restores saved values"
+    },
+    {
+      "name": "Fit and position controls apply; settings remain usable in a 900px web window"
+    },
+    {
+      "name": "Disabling removes every injected surface; enabling and plugin reload restore exactly one layer"
+    },
+    {
+      "name": "No uncaught page errors during the complete workflow"
+    }
+  ],
+  "errors": []
+}

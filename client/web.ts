@@ -287,7 +287,9 @@ class BackgroundManager {
         if (!withOpacity(color, 1)) continue;
         const existing = surfaces.get(node);
         if (!existing) surfaces.set(node, { color, tint: first });
-        // Never tint a common ancestor again after another region cleared it.
+        // An earlier anchor (header or pane) may have tinted this ancestor.
+        // A deeper region must clear it so nested 72% tints do not become 98%.
+        else if (!first) existing.tint = false;
         first = false;
       }
     }

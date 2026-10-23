@@ -7,7 +7,7 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { PNG } from "pngjs";
-import { assertWorkspaceBackground } from "./workspace-checks.mjs";
+import { assertWorkspaceBackground, assertNestedChatBackground } from "./workspace-checks.mjs";
 
 const exec = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -114,15 +114,17 @@ try {
   for (const title of ["Background verification", "Second workspace verification", "Background verification", "Second workspace verification", "Background verification"]) {
     await workspace(page, title);
     await wait(500);
-    await assertWorkspaceBackground(page);
+    await assertWorkspaceBackground(page, 0.35);
     assert.ok(await savedImage.evaluate((image) => image.isConnected), "Workspace switching must reuse the loaded image");
   }
   for (const title of ["Second workspace verification", "Background verification", "Second workspace verification", "Background verification"]) await workspace(page, title);
   await wait(500);
-  await assertWorkspaceBackground(page);
+  await assertWorkspaceBackground(page, 0.35);
   await savedImage.dispose();
   await page.screenshot({ path: path.join(out, "web-workspace-switch.png") });
   check("Two real workspaces preserve the background through five visits and four rapid cached switches");
+  check("Nested conversation backgrounds compose to the configured opacity; controls remain opaque",
+    await assertNestedChatBackground(page, 0.35, path.join(out, "web-chat-opacity.png")));
   await workspace(page);
   await wait(500);
   const forest = await imageSource(page);

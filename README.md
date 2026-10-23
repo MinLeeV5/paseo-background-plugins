@@ -28,16 +28,16 @@
 在目标主机启用 Paseo 插件功能后运行：
 
 ```sh
-paseo plugin add git:MinLeeV5/paseo-background-plugins --ref v0.1.1
+paseo plugin add git:MinLeeV5/paseo-background-plugins --ref v0.1.2
 paseo plugin ls paseo-background
 ```
 
 `git:` 前缀用于指定 Git 仓库。插件运行 ID 是 `paseo-background`。安装不需要手动执行 `npm install`，依赖由 Paseo 提供。
 
-已有安装可更新到修复 workspace 切换问题的版本：
+已有安装可更新到修复 workspace 切换及聊天区底色叠加的版本：
 
 ```sh
-paseo plugin update paseo-background --ref v0.1.1
+paseo plugin update paseo-background --ref v0.1.2
 ```
 
 安装后，点击侧边栏的 **背景 / Backgrounds**，选择背景并点击 **保存背景**。也可以在设置的主机插件区域打开背景设置，或在 Command Center 搜索 `background`、`背景`。
@@ -69,7 +69,7 @@ paseo plugin add /absolute/path/to/paseo-background-plugins
 paseo plugin reload paseo-background
 ```
 
-`npm run check` 包含严格类型检查和 16 项回归检查。客户端类型检查不启用 DOM 类型库，浏览器调用集中在 `client/web.ts`。
+`npm run check` 包含严格类型检查和 17 项回归检查。客户端类型检查不启用 DOM 类型库，浏览器调用集中在 `client/web.ts`。
 
 已安装 Paseo CLI 和 Playwright Chromium 时，可运行完整流程验证：
 
@@ -88,6 +88,8 @@ PASEO_DESKTOP_EXECUTABLE=/Applications/Paseo.app/Contents/MacOS/Paseo npm run te
 实现说明见 [DESIGN.md](DESIGN.md)，实际验收范围见 [verification/INSTALLED.md](verification/INSTALLED.md)。早期渲染原型保留在 `verification/`，生产入口是 `index.client.tsx` 和 `index.server.ts`。
 
 v0.1.1 的 workspace 切换修复与回归证据见 [工作区切换验收](verification/workspace-switch/README.md)。
+
+v0.1.2 修复实际聊天页面的多层底色叠加，验证记录见 [聊天区透明度验收](verification/chat-opacity/README.md)。
 
 ## 实现边界
 

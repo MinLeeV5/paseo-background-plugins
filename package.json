@@ -1,6 +1,6 @@
 {
   "name": "paseo-background-plugins",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Choose backgrounds and adjust image and surface opacity in Paseo desktop and web.",
   "type": "module",
   "license": "MIT",

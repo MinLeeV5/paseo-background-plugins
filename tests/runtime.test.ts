@@ -74,6 +74,43 @@ test("adapts cached workspaces when their transparent retained wrappers change v
   }
 });
 
+test("nested workspace and chat regions do not multiply the configured surface opacity", async () => {
+  const pane = dom.document.querySelector("section")!;
+  const workspace = dom.document.createElement("div");
+  workspace.id = "nested-workspace";
+  pane.replaceWith(workspace);
+  workspace.innerHTML = '<header><span data-testid="workspace-header-title">Workspace</span></header>';
+  workspace.appendChild(pane);
+  pane.innerHTML = '<article><div data-testid="agent-chat-scroll"></div></article>';
+  // Paseo uses stylesheet colors. JSDOM does not implement !important over
+  // inline colors, so use the same cascade here for the compositing assertion.
+  for (const node of dom.document.querySelectorAll("main, aside, section")) node.removeAttribute("style");
+  const theme = dom.document.createElement("style");
+  theme.textContent = "main{background-color:rgb(20,24,30)}aside,section,#nested-workspace,article{background-color:rgb(25,28,33)}";
+  dom.document.head.appendChild(theme);
+  const h = runtime();
+  const values = { ...enabled(), surfaceOpacity: 0.72 };
+  h.update(values);
+  await settle();
+  function chatAlpha() {
+    let transmission = 1;
+    for (let node = pane.querySelector("[data-testid=agent-chat-scroll]"); node && node.id !== "root"; node = node.parentElement) {
+      const color = dom.window.getComputedStyle(node).backgroundColor;
+      const alpha = color.startsWith("rgba(") ? Number(color.slice(5, -1).split(",")[3]) : color.startsWith("rgb(") ? 1 : 0;
+      transmission *= 1 - alpha;
+    }
+    return 1 - transmission;
+  }
+  assert.ok(Math.abs(chatAlpha() - 0.72) < 0.001, "The composed chat background must match the slider rather than stacking several tints");
+  h.update({ ...values, surfaceOpacity: 0.4 });
+  await settle();
+  assert.ok(Math.abs(chatAlpha() - 0.4) < 0.001, "Changing the slider must control the composed opacity");
+  // Refreshing an already adapted tree must not accumulate alpha either.
+  dom.window.dispatchEvent(new dom.window.Event("focus"));
+  await settle();
+  assert.ok(Math.abs(chatAlpha() - 0.4) < 0.001);
+});
+
 test("late image decode cannot recreate a disabled or disposed background", async () => {
   const loading = deferred<void>();
   dom.decode(() => loading.promise);

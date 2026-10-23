@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2 — 2026-10-23
+
+- Fix nested header, workspace and chat backgrounds multiplying surface opacity: three 72% tints previously composed to 97.8%, making a saved background appear absent.
+- Let deeper regions clear previously tinted ancestors, independent of anchor order, while retaining native control and text opacity.
+- Add a nested conversation regression and check composed opacity in Web and desktop workflows, including a populated chat layout fixture without model requests.
+
 ## 0.1.1 — 2026-10-23
 
 - Fix backgrounds disappearing when switching back to a cached workspace: observe visibility changes on transparent layout ancestors, including hidden workspace paths.

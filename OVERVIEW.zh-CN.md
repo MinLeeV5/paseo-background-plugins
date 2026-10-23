@@ -7,7 +7,7 @@
 要求支持 v0.13 插件接口的 Paseo 客户端和 daemon，实际验证版本是 **0.13.0-beta.1**。验收时公开 Web 站点仍为 v0.12.0，需要使用匹配版本的 Web UI。原生移动端不在支持范围；Windows 和 Linux 尚未实测。
 
 ```sh
-paseo plugin add git:MinLeeV5/paseo-background-plugins --ref v0.1.1
+paseo plugin add git:MinLeeV5/paseo-background-plugins --ref v0.1.2
 ```
 
 插件不修改 Paseo 源码；通过浏览器图片层和限定范围的样式适配布局。编辑器、终端、菜单和嵌入网页保留自己的底色，无法使系统窗口透明。首版不包含本地图片上传。

@@ -6,7 +6,7 @@ import { spawn, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
-import { assertWorkspaceBackground } from "./workspace-checks.mjs";
+import { assertWorkspaceBackground, assertNestedChatBackground } from "./workspace-checks.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const executable = process.env.PASEO_DESKTOP_EXECUTABLE ?? "/Applications/Paseo.app/Contents/MacOS/Paseo";
@@ -108,15 +108,17 @@ try {
   for (const title of ["Second workspace verification", "Background verification", "Second workspace verification", "Background verification"]) {
     await workspace(page, title);
     await wait(500);
-    await assertWorkspaceBackground(page);
+    await assertWorkspaceBackground(page, 0.45);
     assert.ok(await savedImage.evaluate((image) => image.isConnected));
   }
   for (const title of ["Second workspace verification", "Background verification", "Second workspace verification", "Background verification"]) await workspace(page, title);
   await wait(500);
-  await assertWorkspaceBackground(page);
+  await assertWorkspaceBackground(page, 0.45);
   await savedImage.dispose();
   await page.screenshot({ path: path.join(out, "desktop-workspace-switch.png") });
   check("Desktop cached workspaces keep one loaded image and transparent surfaces through repeated and rapid switching");
+  check("Desktop nested conversation backgrounds match the opacity slider; controls remain opaque",
+    await assertNestedChatBackground(page, 0.45, path.join(out, "desktop-chat-opacity.png")));
   await page.reload();
   await expect(async () => await imageSource(page).catch(() => "") === saved, "Desktop reload lost the saved background", 30000);
   check("Desktop reload restores background without opening settings");
