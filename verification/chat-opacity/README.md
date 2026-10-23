@@ -21,6 +21,8 @@
 
 结果：[Web](web-results.json)、[桌面](desktop-results.json)。公开截图仅使用独立测试工作区及合成会话文本。
 
+本机热更新后，在上面两个实际工作区之间连续切换 8 次，聊天区最终底色 alpha 均为 **0.72**。随后刷新恢复通过，右侧聊天留白区域的图片显示 / 隐藏像素平均差为 **21.89**；更新前后的背景配置文件哈希一致。没有重启日常 daemon。去除会话内容和连接信息的结果见 [实际工作区记录](real-workspaces.json)。
+
 ![Web 聊天布局合成透明度](web-chat-opacity.png)
 
 ![原版桌面聊天布局合成透明度](desktop-chat-opacity.png)

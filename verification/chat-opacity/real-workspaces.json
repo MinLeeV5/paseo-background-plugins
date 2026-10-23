@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-23T01:41:57.024Z",
+  "client": "Official packaged macOS desktop, existing session hot update",
+  "release": "0.1.2",
+  "savedSurfaceOpacity": 0.72,
+  "originalCompositeChatOpacity": 0.978048,
+  "switches": [
+    {
+      "workspace": "paseo-background-plugins",
+      "regions": [
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "help-answer",
+      "regions": [
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "paseo-background-plugins",
+      "regions": [
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "help-answer",
+      "regions": [
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "paseo-background-plugins",
+      "regions": [
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "help-answer",
+      "regions": [
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "paseo-background-plugins",
+      "regions": [
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    },
+    {
+      "workspace": "help-answer",
+      "regions": [
+        {
+          "testID": "workspace-pane-main",
+          "opacity": 0
+        },
+        {
+          "testID": "agent-chat-scroll",
+          "opacity": 0.72
+        }
+      ],
+      "maxCompositeOpacity": 0.72
+    }
+  ],
+  "chatPixelDifference": 21.88785173160173,
+  "savedImagePreserved": true,
+  "settingsFileUnchanged": true,
+  "reloadPassed": true,
+  "windowRecreated": false
+}
