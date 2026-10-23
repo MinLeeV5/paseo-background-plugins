@@ -93,6 +93,7 @@ test("covers short layout bars, the explorer and composer surroundings while pre
   const rect = dom.window.HTMLElement.prototype.getBoundingClientRect;
   dom.window.HTMLElement.prototype.getBoundingClientRect = function () {
     const box = rect.call(this);
+    if (this.style.display === "contents") return { ...box, width: 0, height: 0 };
     return { ...box, height: ["HEADER", "NAV", "FOOTER"].includes(this.tagName) ? 36 : box.height };
   };
   runtime().update(enabled());
@@ -104,7 +105,10 @@ test("covers short layout bars, the explorer and composer surroundings while pre
   const plugin = dom.document.createElement("div");
   plugin.style.cssText = "overflow-y:auto;background-color:rgb(20,24,30)";
   plugin.innerHTML = '<div class="plugin-card" style="background-color:rgb(60,70,80)">Keep cards distinct</div>';
-  main.querySelector('[data-testid="workspace-explorer-sidebar"]')!.appendChild(plugin);
+  const provider = dom.document.createElement("div");
+  provider.style.display = "contents";
+  provider.appendChild(plugin);
+  main.querySelector('[data-testid="workspace-explorer-sidebar"]')!.appendChild(provider);
   await settle(0);
   assert.ok(plugin.hasAttribute("data-paseo-background-surface"), "Unlabelled plugin scroll viewports are layout surfaces too");
   assert.equal(plugin.firstElementChild!.hasAttribute("data-paseo-background-surface"), false, "Panel cards keep their own backgrounds");

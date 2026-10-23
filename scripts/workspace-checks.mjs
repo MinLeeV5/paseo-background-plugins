@@ -98,7 +98,11 @@ export async function assertPluginViewport(page, surfaceOpacity) {
     viewport.setAttribute("data-background-viewport-fixture", "true");
     viewport.style.cssText = "position:absolute;inset:36px 0 0;overflow-y:auto;background-color:rgb(30,35,42);z-index:3";
     viewport.innerHTML = '<div data-background-card style="margin:16px;height:100px;background-color:rgb(60,70,80)">Plugin card</div>';
-    node.appendChild(viewport);
+    const provider = document.createElement("div");
+    provider.setAttribute("data-background-provider-fixture", "true");
+    provider.style.display = "contents";
+    provider.appendChild(viewport);
+    node.appendChild(provider);
   });
   try {
     const viewport = page.locator("[data-background-viewport-fixture]");
@@ -107,7 +111,7 @@ export async function assertPluginViewport(page, surfaceOpacity) {
     assert.equal(await page.locator("[data-background-card]").evaluate((node) => getComputedStyle(node).backgroundColor), "rgb(60, 70, 80)");
     return await assertWorkspaceBackground(page, surfaceOpacity);
   } finally {
-    await page.locator("[data-background-viewport-fixture]").evaluateAll((nodes) => nodes.forEach((node) => node.remove()));
+    await page.locator("[data-background-provider-fixture]").evaluateAll((nodes) => nodes.forEach((node) => node.remove()));
   }
 }
 

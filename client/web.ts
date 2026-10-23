@@ -65,7 +65,7 @@ declare const window: {
   addEventListener(name: string, callback: () => void): void;
   removeEventListener(name: string, callback: () => void): void;
 };
-declare const getComputedStyle: (element: Element) => { backgroundColor: string; overflowY: string };
+declare const getComputedStyle: (element: Element) => { backgroundColor: string; overflowY: string; display: string };
 declare const queueMicrotask: (callback: () => void) => void;
 declare const MutationObserver: new (callback: (records: RecordChange[]) => void) => {
   observe(node: Element, options: object): void;
@@ -298,9 +298,14 @@ class BackgroundManager {
     }
     const visit = (node: Element, depth: number) => {
       if (depth > 8 || node.matches(CONTENT_SURFACES)) return;
+      const style = getComputedStyle(node);
+      if (style.display === "contents") {
+        for (const child of node.children) visit(child, depth);
+        return;
+      }
       const box = node.getBoundingClientRect();
       if (box.width < 140 || box.height < 140) return;
-      if (["auto", "scroll"].includes(getComputedStyle(node).overflowY)) {
+      if (["auto", "scroll"].includes(style.overflowY)) {
         this.scrollRoots.add(node);
         anchors.add(node);
         return;
