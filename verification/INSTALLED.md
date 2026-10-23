@@ -2,6 +2,8 @@
 
 2026-10-23（Asia/Shanghai），Paseo `0.13.0-beta.1`。
 
+本文保留 v0.1.0 的首次安装验收。v0.1.1 修复了其遗漏的缓存工作区切换场景，新增证据见 [workspace-switch/README.md](workspace-switch/README.md)。
+
 这份记录验收实际插件的安装和客户端行为。此前的[渲染原型](README.md)只验证了图片层方案，不能替代这里的插件加载证据。
 
 ## 环境

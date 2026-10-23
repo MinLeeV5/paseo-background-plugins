@@ -6,6 +6,7 @@ import { spawn, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
+import { assertWorkspaceBackground } from "./workspace-checks.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const executable = process.env.PASEO_DESKTOP_EXECUTABLE ?? "/Applications/Paseo.app/Contents/MacOS/Paseo";
@@ -13,7 +14,7 @@ await fs.access(executable);
 await fs.mkdir(path.join(root, ".local"), { recursive: true });
 const home = await fs.mkdtemp(path.join(root, ".local", "desktop-e2e-"));
 const profile = path.join(home, "profile");
-const out = path.join(root, "verification", "installed");
+const out = path.resolve(root, process.env.PASEO_VERIFICATION_DIR ?? "verification/installed");
 await fs.mkdir(profile); await fs.mkdir(out, { recursive: true });
 const exec = promisify(execFile);
 const run = async (...args) => JSON.parse((await exec(process.env.PASEO_CLI ?? "paseo", [...args, "--home", home, "--json"], { maxBuffer: 2e6 })).stdout);
@@ -45,19 +46,25 @@ async function range(page, id, value) {
 }
 async function save(page) { await page.getByTestId("background-save").click(); await page.getByTestId("background-saved-message").waitFor(); }
 async function settings(page) { await page.getByText("Backgrounds", { exact: true }).first().click(); await page.getByTestId("background-preset-forest").waitFor(); }
-async function workspace(page) { await page.locator('[data-testid^="sidebar-workspace-row-"]').first().click(); await page.locator('[data-testid^="workspace-pane-"]').first().waitFor(); }
+async function workspace(page, title = "Background verification") {
+  await page.locator('[data-testid^="sidebar-workspace-row-"]').filter({ hasText: title }).first().click();
+  await page.locator('[data-testid^="workspace-pane-"]:visible').first().waitFor();
+}
 
 try {
   await run("daemon", "start", "--timeout", "25"); started = true;
   await run("plugin", "install", root);
   const fixture = path.join(home, "workspace"); await fs.mkdir(fixture);
   await run("workspace", "create", "--isolation", "local", "--path", fixture, "--title", "Background verification");
+  const nextFixture = path.join(home, "workspace-next"); await fs.mkdir(nextFixture);
+  await run("workspace", "create", "--isolation", "local", "--path", nextFixture, "--title", "Second workspace verification");
   child = spawn(executable, [`--remote-debugging-port=${debugPort}`], { env: { ...process.env, PASEO_HOME: home, PASEO_ELECTRON_USER_DATA_DIR: profile, PASEO_TEST_APP_NAME: "Paseo Background Verification" }, stdio: ["ignore", log.fd, log.fd] });
   await expect(() => fetch(`http://127.0.0.1:${debugPort}/json/version`).then((r) => r.ok).catch(() => false), "Desktop CDP did not start", 40000);
   const runtime = await fetch(`http://127.0.0.1:${debugPort}/json/version`).then((r) => r.json());
   browser = await chromium.connectOverCDP(`http://127.0.0.1:${debugPort}`);
   const context = browser.contexts()[0];
   const page = context.pages()[0] ?? await context.newPage();
+  page.setDefaultTimeout(20000);
   page.on("pageerror", (error) => errors.push(error.message));
   await page.getByText(/^(Direct connection|直接连接)$/).waitFor({ timeout: 40000 });
   await page.addInitScript(() => {
@@ -97,6 +104,19 @@ try {
   await wait(400);
   await page.screenshot({ path: path.join(out, "desktop-workspace.png") });
   check("Desktop preset, opacity, blur, brightness, fit and position preview, save and survive navigation");
+  const savedImage = await page.locator("#paseo-background-layer img").elementHandle();
+  for (const title of ["Second workspace verification", "Background verification", "Second workspace verification", "Background verification"]) {
+    await workspace(page, title);
+    await wait(500);
+    await assertWorkspaceBackground(page);
+    assert.ok(await savedImage.evaluate((image) => image.isConnected));
+  }
+  for (const title of ["Second workspace verification", "Background verification", "Second workspace verification", "Background verification"]) await workspace(page, title);
+  await wait(500);
+  await assertWorkspaceBackground(page);
+  await savedImage.dispose();
+  await page.screenshot({ path: path.join(out, "desktop-workspace-switch.png") });
+  check("Desktop cached workspaces keep one loaded image and transparent surfaces through repeated and rapid switching");
   await page.reload();
   await expect(async () => await imageSource(page).catch(() => "") === saved, "Desktop reload lost the saved background", 30000);
   check("Desktop reload restores background without opening settings");

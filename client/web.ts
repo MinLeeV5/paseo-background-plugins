@@ -93,6 +93,7 @@ const ANCHORS = [
 class BackgroundManager {
   private owners = new Map<symbol, Owner>();
   private patched = new Map<Element, string | null>();
+  private layoutNodes = new Set<Element>();
   private root: Element | null = null;
   private style: Element | null = null;
   private layer: Element | null = null;
@@ -223,13 +224,15 @@ class BackgroundManager {
     this.observer = new MutationObserver((records) => {
       const changed = records.some((record) => {
         if (record.target.closest(`[${OWNED}]`)) return false;
-        if (record.type === "attributes") return this.patched.has(record.target);
+        // Retained workspaces change visibility on transparent wrappers. Those
+        // nodes need observation even though their backgrounds are not patched.
+        if (record.type === "attributes") return this.layoutNodes.has(record.target) || record.target.matches(ANCHORS);
         return [...record.addedNodes, ...record.removedNodes].some((node) => node.nodeType === 1 &&
           !node.getAttribute(OWNED) && (node.matches(ANCHORS) || Boolean(node.querySelector(ANCHORS))));
       });
       if (changed) this.schedule();
     });
-    this.observer.observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "style"] });
+    this.observer.observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "style", "hidden", "data-testid"] });
     window.addEventListener("resize", this.schedule);
     window.addEventListener("focus", this.schedule);
   }
@@ -265,12 +268,19 @@ class BackgroundManager {
       else node.setAttribute(MARK, previous);
     }
     this.patched.clear();
+    this.layoutNodes.clear();
+    this.layoutNodes.add(this.root);
     const surfaces = new Map<Element, { color: string; tint: boolean }>();
     for (const anchor of document.querySelectorAll(ANCHORS)) {
+      if (anchor.closest(`[${OWNED}]`)) continue;
       const box = anchor.getBoundingClientRect();
-      if (box.width < 1 || box.height < 1 || anchor.closest(`[${OWNED}]`)) continue;
+      const visible = box.width > 0 && box.height > 0;
       let first = true;
       for (let node: Element | null = anchor; node && node !== this.root; node = node.parentElement) {
+        // Include hidden and zero-size paths so showing a cached workspace
+        // schedules a refresh without requiring a remount or window focus.
+        this.layoutNodes.add(node);
+        if (!visible) continue;
         const bounds = node.getBoundingClientRect();
         if (bounds.width < 140 || bounds.height < 140) continue;
         const color = getComputedStyle(node).backgroundColor;
@@ -310,6 +320,7 @@ class BackgroundManager {
       else node.setAttribute(MARK, previous);
     }
     this.patched.clear();
+    this.layoutNodes.clear();
     this.root?.removeAttribute(ROOT_MARK);
     this.layer?.remove();
     this.style?.remove();

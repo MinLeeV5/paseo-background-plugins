@@ -7,6 +7,7 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { PNG } from "pngjs";
+import { assertWorkspaceBackground } from "./workspace-checks.mjs";
 
 const exec = promisify(execFile);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -14,7 +15,7 @@ const dist = process.env.PASEO_APP_DIST ?? "/Applications/Paseo.app/Contents/Res
 await fs.access(path.join(dist, "index.html"));
 await fs.mkdir(path.join(root, ".local"), { recursive: true });
 const home = await fs.mkdtemp(path.join(root, ".local", "e2e-"));
-const out = path.join(root, "verification", "installed");
+const out = path.resolve(root, process.env.PASEO_VERIFICATION_DIR ?? "verification/installed");
 await fs.mkdir(out, { recursive: true });
 const cli = process.env.PASEO_CLI ?? "paseo";
 const run = async (...args) => JSON.parse((await exec(cli, [...args, "--home", home, "--json"], { maxBuffer: 2e6 })).stdout);
@@ -46,9 +47,9 @@ async function settings(page) {
   await page.getByText("Backgrounds", { exact: true }).first().click();
   await page.getByTestId("background-preset-forest").waitFor();
 }
-async function workspace(page) {
-  await page.locator('[data-testid^="sidebar-workspace-row-"]').first().click();
-  await page.locator('[data-testid^="workspace-pane-"]').first().waitFor();
+async function workspace(page, title = "Background verification") {
+  await page.locator('[data-testid^="sidebar-workspace-row-"]').filter({ hasText: title }).first().click();
+  await page.locator('[data-testid^="workspace-pane-"]:visible').first().waitFor();
 }
 async function range(page, id, value) {
   await page.getByTestId(`background-range-${id}`).evaluate((input, next) => {
@@ -82,9 +83,13 @@ try {
   const fixturePath = path.join(home, "workspace");
   await fs.mkdir(fixturePath);
   await run("workspace", "create", "--isolation", "local", "--path", fixturePath, "--title", "Background verification");
+  const secondFixturePath = path.join(home, "workspace-next");
+  await fs.mkdir(secondFixturePath);
+  await run("workspace", "create", "--isolation", "local", "--path", secondFixturePath, "--title", "Second workspace verification");
   browser = await chromium.launch();
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: "en-US", colorScheme: "dark" });
   const page = await context.newPage();
+  page.setDefaultTimeout(20000);
   captureErrors(page);
   await page.goto(url);
   await page.getByText("Direct connection", { exact: true }).click({ timeout: 40000 });
@@ -105,12 +110,25 @@ try {
   assert.equal(await page.locator("#paseo-background-layer img").evaluate((img) => img.style.opacity), "0.85");
   await save(page);
   check("Preset and all four sliders preview and save through settings RPC");
+  const savedImage = await page.locator("#paseo-background-layer img").elementHandle();
+  for (const title of ["Background verification", "Second workspace verification", "Background verification", "Second workspace verification", "Background verification"]) {
+    await workspace(page, title);
+    await wait(500);
+    await assertWorkspaceBackground(page);
+    assert.ok(await savedImage.evaluate((image) => image.isConnected), "Workspace switching must reuse the loaded image");
+  }
+  for (const title of ["Second workspace verification", "Background verification", "Second workspace verification", "Background verification"]) await workspace(page, title);
+  await wait(500);
+  await assertWorkspaceBackground(page);
+  await savedImage.dispose();
+  await page.screenshot({ path: path.join(out, "web-workspace-switch.png") });
+  check("Two real workspaces preserve the background through five visits and four rapid cached switches");
   await workspace(page);
   await wait(500);
   const forest = await imageSource(page);
   const first = await page.screenshot();
   const sidebar = await page.getByTestId("sidebar-project-workspace-list-scroll").boundingBox();
-  const pane = await page.locator('[data-testid^="workspace-pane-"]').first().boundingBox();
+  const pane = await page.locator('[data-testid^="workspace-pane-"]:visible').first().boundingBox();
   const region = { x: pane.x + pane.width * 0.65, y: pane.y + pane.height * 0.2, width: pane.width * 0.25, height: pane.height * 0.3 };
   const textColor = await page.getByText("New tab", { exact: true }).first().evaluate((node) => getComputedStyle(node).color);
   await settings(page);

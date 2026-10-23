@@ -5,6 +5,9 @@ export function fixture() {
   const w = dom.window;
   Object.assign(globalThis, { window: w, document: w.document, MutationObserver: w.MutationObserver, getComputedStyle: w.getComputedStyle.bind(w) });
   w.HTMLElement.prototype.getBoundingClientRect = function () {
+    for (let node: HTMLElement | null = this; node; node = node.parentElement) {
+      if (w.getComputedStyle(node).display === "none") return { x: 0, y: 0, width: 0, height: 0, top: 0, left: 0, right: 0, bottom: 0, toJSON() {} };
+    }
     return { x: 0, y: 0, width: this.tagName === "BUTTON" ? 100 : 640, height: this.tagName === "BUTTON" ? 30 : 400, top: 0, left: 0, right: 640, bottom: 400, toJSON() {} };
   };
   let decode = (_image: HTMLImageElement) => Promise.resolve();

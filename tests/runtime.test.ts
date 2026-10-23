@@ -42,8 +42,36 @@ test("adapts newly mounted chat regions without scanning for streamed text", asy
   assert.ok(chat.hasAttribute("data-paseo-background-surface"));
   const before = reports;
   chat.appendChild(dom.document.createTextNode("streaming reply"));
+  const row = dom.document.createElement("span");
+  row.textContent = "new streamed row";
+  chat.appendChild(row);
+  row.className = "streaming-highlight";
+  row.style.transform = "translateY(10px)";
   await settle();
   assert.equal(reports, before);
+});
+
+test("adapts cached workspaces when their transparent retained wrappers change visibility", async () => {
+  const first = dom.document.querySelector("section")!;
+  const wrapper = dom.document.createElement("div");
+  first.replaceWith(wrapper);
+  wrapper.appendChild(first);
+  const cached = dom.document.createElement("div");
+  cached.style.display = "none";
+  cached.innerHTML = '<section data-testid="workspace-pane-cached" style="background-color:rgb(45, 50, 60)"></section>';
+  dom.document.querySelector("main")!.appendChild(cached);
+  runtime().update(enabled());
+  await settle();
+  assert.equal(wrapper.hasAttribute("data-paseo-background-surface"), false);
+  const second = cached.querySelector("section")!;
+  assert.equal(second.hasAttribute("data-paseo-background-surface"), false);
+  for (const next of [cached, wrapper, cached, wrapper]) {
+    wrapper.style.display = next === wrapper ? "flex" : "none";
+    cached.style.display = next === cached ? "flex" : "none";
+    await settle();
+    assert.ok(next.querySelector("section")!.hasAttribute("data-paseo-background-surface"), "The newly visible workspace must be adapted without a focus or settings event");
+    assert.equal(dom.document.querySelectorAll("#paseo-background-layer").length, 1);
+  }
 });
 
 test("late image decode cannot recreate a disabled or disposed background", async () => {

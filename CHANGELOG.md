@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 — 2026-10-23
+
+- Fix backgrounds disappearing when switching back to a cached workspace: observe visibility changes on transparent layout ancestors, including hidden workspace paths.
+- Keep streaming text and message row style changes outside the background rescan path.
+- Add a regression for hidden workspace activation and verify repeated / rapid switching between two real workspaces on Web and the packaged macOS desktop app.
+- Ensure end-to-end checks select visible panes when several cached workspaces remain mounted.
+
 ## 0.1.0 — 2026-10-23
 
 - First desktop and Web release for Paseo's v0.13 plugin API.
