@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-23T02:13:19.000Z",
+  "date": "2026-10-23T02:19:23.290Z",
   "paseo": "0.13.0-beta.1",
   "client": "Official desktop app-dist in Chromium",
   "checks": [
@@ -14,7 +14,7 @@
     },
     {
       "name": "Workspace switches keep the background adapted on every sampled rendering frame",
-      "frames": 39,
+      "frames": 41,
       "errors": []
     },
     {

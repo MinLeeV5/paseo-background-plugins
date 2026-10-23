@@ -87,6 +87,20 @@ test("adapts a newly visible cached workspace before the next paint task", async
   assert.ok(cached.querySelector("section")!.hasAttribute("data-paseo-background-surface"), "No timer delay may expose the native workspace background");
 });
 
+test("adapts layout size changes without a DOM attribute change", async () => {
+  const pane = dom.document.querySelector("section")!;
+  let visible = false;
+  const rect = pane.getBoundingClientRect.bind(pane);
+  pane.getBoundingClientRect = () => visible ? rect() : { ...rect(), width: 0, height: 0 };
+  runtime().update(enabled());
+  await settle();
+  assert.equal(pane.hasAttribute("data-paseo-background-surface"), false);
+  visible = true;
+  dom.resize(pane);
+  await settle(0);
+  assert.ok(pane.hasAttribute("data-paseo-background-surface"));
+});
+
 test("covers short layout bars, the explorer and composer surroundings while preserving controls", async () => {
   const main = dom.document.querySelector("main")!;
   main.insertAdjacentHTML("beforeend", '<header data-testid="composer-dock-header" style="background-color:rgb(25,28,33)"></header><aside data-testid="workspace-explorer-sidebar" style="background-color:rgb(30,35,42)"><nav data-testid="workspace-tabs-row" style="background-color:rgb(30,35,42)"></nav><div style="background-color:rgb(30,35,42)"><div data-testid="file-explorer-tree-scroll"></div></div></aside><footer style="background-color:rgb(25,28,33)"><div data-testid="message-input-root"><button style="background-color:rgb(90,100,110)">Send</button></div></footer>');
@@ -184,6 +198,9 @@ test("a failed replacement retains the loaded image and reports a visible error"
   await settle();
   assert.equal(status, "error");
   assert.equal(dom.document.querySelector("#paseo-background-layer img"), original);
+  dom.resize(dom.document.querySelector("section")!);
+  await settle(0);
+  assert.equal(status, "error", "A layout resize must not hide the replacement error");
 });
 
 test("a newer selection wins an image loading race", async () => {

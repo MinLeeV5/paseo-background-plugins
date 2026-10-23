@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-23T02:13:20.110Z",
+  "date": "2026-10-23T02:18:12.805Z",
   "paseo": "0.13.0-beta.1",
   "client": "Unmodified official packaged macOS desktop application",
   "runtime": {
@@ -18,7 +18,7 @@
     },
     {
       "name": "Desktop workspace switches keep surfaces adapted on every sampled rendering frame",
-      "frames": 38,
+      "frames": 61,
       "errors": []
     },
     {

@@ -70,7 +70,7 @@ paseo plugin add /absolute/path/to/paseo-background-plugins
 paseo plugin reload paseo-background
 ```
 
-`npm run check` 包含严格类型检查和 19 项回归检查。客户端类型检查不启用 DOM 类型库，浏览器调用集中在 `client/web.ts`。
+`npm run check` 包含严格类型检查和 20 项回归检查。客户端类型检查不启用 DOM 类型库，浏览器调用集中在 `client/web.ts`。
 
 已安装 Paseo CLI 和 Playwright Chromium 时，可运行完整流程验证：
 

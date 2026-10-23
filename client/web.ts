@@ -71,6 +71,11 @@ declare const MutationObserver: new (callback: (records: RecordChange[]) => void
   observe(node: Element, options: object): void;
   disconnect(): void;
 };
+declare const ResizeObserver: new (callback: () => void) => {
+  observe(node: Element): void;
+  unobserve(node: Element): void;
+  disconnect(): void;
+};
 
 export interface RuntimeState {
   status: "off" | "loading" | "active" | "partial" | "error" | "other-host";
@@ -111,6 +116,7 @@ class BackgroundManager {
   private patched = new Map<Element, string | null>();
   private layoutNodes = new Set<Element>();
   private scrollRoots = new Set<Element>();
+  private sizedNodes = new Set<Element>();
   private root: Element | null = null;
   private style: Element | null = null;
   private layer: Element | null = null;
@@ -123,6 +129,7 @@ class BackgroundManager {
   private refreshEpoch = 0;
   private loadTimer: number | null = null;
   private observer: InstanceType<typeof MutationObserver> | null = null;
+  private resizeObserver: InstanceType<typeof ResizeObserver> | null = null;
   private active: symbol | null = null;
   private preferred: string | null = null;
   private lastState: RuntimeState = { status: "off", surfaces: 0, error: null };
@@ -261,6 +268,7 @@ class BackgroundManager {
       if (changed) this.schedule();
     });
     this.observer.observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ["class", "style", "hidden", "data-testid"] });
+    this.resizeObserver = new ResizeObserver(this.schedule);
     window.addEventListener("resize", this.schedule);
     window.addEventListener("focus", this.schedule);
   }
@@ -297,14 +305,16 @@ class BackgroundManager {
       else anchors.add(root);
     }
     const visit = (node: Element, depth: number) => {
-      if (depth > 8 || node.matches(CONTENT_SURFACES)) return;
+      if (depth > 8 || node.matches(CONTENT_SURFACES) || node.tagName === "BUTTON" || node.getAttribute("role") === "button") return;
       const style = getComputedStyle(node);
       if (style.display === "contents") {
         for (const child of node.children) visit(child, depth);
         return;
       }
       const box = node.getBoundingClientRect();
-      if (box.width < 140 || box.height < 140) return;
+      // Hidden retained panels still need their viewport paths registered so
+      // activation is observed before their first visible frame.
+      if (box.width > 0 && box.height > 0 && (box.width < 140 || box.height < 140)) return;
       if (["auto", "scroll"].includes(style.overflowY)) {
         this.scrollRoots.add(node);
         anchors.add(node);
@@ -337,7 +347,18 @@ class BackgroundManager {
       const shell = this.root.querySelector('[data-testid="wide-shell"]') ?? this.root;
       const shellColor = getComputedStyle(shell).backgroundColor;
       if (withOpacity(shellColor, 1)) themeColor = shellColor;
-      for (const anchor of this.anchors()) {
+      const anchors = this.anchors();
+      for (const node of this.sizedNodes) {
+        if (anchors.has(node)) continue;
+        this.resizeObserver?.unobserve(node);
+        this.sizedNodes.delete(node);
+      }
+      for (const node of anchors) {
+        if (!this.root.contains(node) || this.sizedNodes.has(node)) continue;
+        this.sizedNodes.add(node);
+        this.resizeObserver?.observe(node);
+      }
+      for (const anchor of anchors) {
         if (!this.root.contains(anchor) || anchor.closest(`[${OWNED}]`)) continue;
         const box = anchor.getBoundingClientRect();
         const visible = box.width > 0 && box.height > 0;
@@ -377,6 +398,16 @@ class BackgroundManager {
     ];
     const text = css.join("\n");
     if (this.style.textContent !== text) this.style.textContent = text;
+    // Layout notifications must not clear a loading/error indicator for a
+    // replacement image while the previously decoded image remains visible.
+    if (this.loadingUri) {
+      this.report({ status: "loading", surfaces: surfaces.size, error: null });
+      return;
+    }
+    if (this.lastState.status === "error" && sourceUri(owner.values) !== this.uri) {
+      this.report({ ...this.lastState, surfaces: surfaces.size });
+      return;
+    }
     this.report({ status: surfaces.size > 1 ? "active" : "partial", surfaces: surfaces.size,
       error: surfaces.size > 1 ? null : "This page has no supported background regions yet." });
   }
@@ -386,6 +417,9 @@ class BackgroundManager {
     this.refreshQueued = false;
     this.observer?.disconnect();
     this.observer = null;
+    this.resizeObserver?.disconnect();
+    this.resizeObserver = null;
+    this.sizedNodes.clear();
     window.removeEventListener("resize", this.schedule);
     window.removeEventListener("focus", this.schedule);
     for (const [node, previous] of this.patched) {
