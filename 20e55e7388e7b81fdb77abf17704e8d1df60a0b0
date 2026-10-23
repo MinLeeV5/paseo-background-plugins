@@ -1,0 +1,33 @@
+verification/chat-opacity/README.md
+  4b756c2ae6bf3165 24-25
+verification/chat-opacity/real-workspaces.json
+  4b756c2ae6bf3165 1-126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.8.1",
+  "base_commit_sha": "20e55e7388e7b81fdb77abf17704e8d1df60a0b0",
+  "prompts": {
+    "4b756c2ae6bf3165": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a16411-0d63-7571-af15-a6e9effae673",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "李伟民 <liweimin@cvte.com>",
+      "messages": [],
+      "total_additions": 128,
+      "total_deletions": 0,
+      "accepted_lines": 131,
+      "overriden_lines": 0,
+      "messages_url": "https://gitai.gz.cvte.cn/cas/7730d8f148c68c6ddffceba8a6fdba1dc1bea2c85f6495471e194c681a01f9fa",
+      "token_usage": {
+        "input_tokens": 797837,
+        "output_tokens": 256470,
+        "cache_read_tokens": 35516416,
+        "cache_creation_tokens": null,
+        "total_cost": null
+      }
+    }
+  }
+}
