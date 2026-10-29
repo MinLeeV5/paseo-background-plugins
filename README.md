@@ -18,7 +18,7 @@
 
 ## 兼容性
 
-支持 **Paseo v0.12.0 起的桌面和 Web 客户端**，需在连接的主机上启用插件功能。当前声明的兼容范围为 `>=0.12.0 <0.14.0`，后续版本的内部布局可能需要适配。
+支持 **Paseo v0.12.0 及以上的桌面和 Web 客户端**，需在连接的主机上启用插件功能。声明的兼容范围为 `>=0.12.0`，不设版本上限；后续版本的内部布局可能需要适配。
 
 已在 Paseo v0.12.0 的原版 macOS 桌面应用、匹配的 Web 客户端及 daemon 中实测，见 [稳定版兼容验收](verification/compatibility/README.md)。Windows / Linux 桌面使用同一 Web 渲染实现，本版本尚未在这些系统实测。原生移动端不注册本插件。
 
@@ -29,16 +29,16 @@
 在目标主机启用 Paseo 插件功能后运行：
 
 ```sh
-paseo plugin add git:MinLeeV5/paseo-background-plugins --ref v0.1.4
+paseo plugin add git:MinLeeV5/paseo-background-plugins --ref v0.1.5
 paseo plugin ls paseo-background
 ```
 
 `git:` 前缀用于指定 Git 仓库。插件运行 ID 是 `paseo-background`。安装不需要手动执行 `npm install`，依赖由 Paseo 提供。
 
-已有安装可更新到兼容 v0.12.0、包含切换闪烁及背景覆盖修复的版本：
+已有安装可更新到支持 Paseo v0.12.0 及以上的版本：
 
 ```sh
-paseo plugin update paseo-background --ref v0.1.4
+paseo plugin update paseo-background --ref v0.1.5
 ```
 
 安装后，点击侧边栏的 **背景 / Backgrounds**，选择背景并点击 **保存背景**。也可以在设置的主机插件区域打开背景设置，或在 Command Center 搜索 `background`、`背景`。

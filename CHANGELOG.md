@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.5 — 2026-10-29
+
+- Remove the Paseo upper version limit; declare compatibility with Paseo `>=0.12.0`.
+- Update the installation and upgrade commands to v0.1.5.
+
 ## 0.1.3 — 2026-10-23
 
 - Adapt layout changes in a microtask before paint instead of waiting 100ms; retain cached surface marks and the loaded image across workspace switches.
